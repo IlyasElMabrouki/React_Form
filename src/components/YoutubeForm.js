@@ -1,9 +1,24 @@
 import React from 'react';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { DevTool } from '@hookform/devtools';
 
 export const YoutubeForm = () => {
-  const form = useForm();
+  const form = useForm({
+    defaultValues: async ()=>{
+      const {data} = await axios.get("https://jsonplaceholder.typicode.com/users/1")
+      return {
+        username: "",
+        email: data.email,
+        channel: "",
+        social: {
+          twitter: "",
+          facebook: ""
+        },
+        phoneNumbers: ["", ""],
+      }
+    }
+  });
   const {
     register,
     control,
@@ -61,6 +76,18 @@ export const YoutubeForm = () => {
           })}
         />
         <p>{errors.channel?.message}</p>
+
+        <label htmlFor="twitter">Twitter</label>
+        <input type="text" id="twitter" {...register('social.twitter')} />
+
+        <label htmlFor="facebook">Facebook</label>
+        <input type="text" id="facebook" {...register('social.facebook')} />
+
+        <label htmlFor="primary-phone">Primary Phone number</label>
+        <input type="text" id="primary-phone" {...register('phoneNumbers.0')} />
+
+        <label htmlFor="secondary-phone">Secondary Phone number</label>
+        <input type="text" id="secondary-phone" {...register('phoneNumbers.1')} />
 
         <button>Submit</button>
       </form>
